@@ -1,0 +1,39 @@
+﻿@model KeelteKoolV2.Models.LanguageCourses.LanguageCourseViewModel
+
+@* separate update create *@
+
+<div>
+    <form method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <input asp-for="Id" type="hidden" />
+
+        <div class="form-group">
+            <label asp-for="Nimetus" class="control-label"></label>
+            <input asp-for="Nimetus" class="form-control" />
+            <span asp-validation-for="Nimetus" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Nimetus" class="control-label"></label>
+            <input asp-for="Nimetus" class="form-control" />
+            <span asp-validation-for="Nimetus" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Nimetus" class="control-label"></label>
+            <input asp-for="Nimetus" class="form-control" />
+            <span asp-validation-for="Nimetus" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Nimetus" class="control-label"></label>
+            <input asp-for="Nimetus" class="form-control" />
+            <span asp-validation-for="Nimetus" class="text-danger"></span>
+        </div>
+
+        <input asp-action="Create" asp-controller="LanguageCourses"
+               type="submit" value="Loo Keelekursus"
+               class="btn btn-success" />
+    </form>
+</div>
