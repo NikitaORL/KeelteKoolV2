@@ -31,7 +31,7 @@ namespace KeelteKoolV2
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
                 options =>
                 {
-                    options.SignIn.RequireConfirmedAccount = true;
+                    options.SignIn.RequireConfirmedAccount = false; // <--- ИЗМЕНЕНО НА FALSE
                     options.Password.RequiredLength = 8;
                     options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
                     options.Lockout.MaxFailedAccessAttempts = 3;
@@ -43,14 +43,13 @@ namespace KeelteKoolV2
 
             //auth
 
-
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+                // The default HSTS value is 30 days. See https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
