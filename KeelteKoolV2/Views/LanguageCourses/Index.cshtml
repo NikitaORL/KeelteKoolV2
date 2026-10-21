@@ -5,14 +5,22 @@
 }
 @* Later check for role of the user, hide this button if not admin or teacher \/ *@
 <div>
+<<<<<<< HEAD
     <a id="IndexCreateNewLanguageCourse_BTN" asp-action="create" asp-controller="LanguageCourses" type="submit" class="btn btn-dark">Lisa uus keelekursus</a>
+=======
+    driver.FindElement(By.Id("IndexCreateNewLanguageCourse_BTN")).Click();
+>>>>>>> 60d41fc7dcaccafb5fceaca6724acf37ded8ce96
 </div>
 
 <div class="h1">
     Keelekursused
 </div>
 <form method="get">
+<<<<<<< HEAD
     <table id="IndexTable" class="table table-hover">
+=======
+    <table class="table table-hover">
+>>>>>>> 60d41fc7dcaccafb5fceaca6724acf37ded8ce96
         <thead>
             <tr>
                 <th scope="col">Nr</th>
@@ -25,6 +33,7 @@
             @foreach (var course in Model)
                 {
                     <tr>
+<<<<<<< HEAD
                         <td >@rownumber</td>
                         <td id="IndexTableCourseNimetus">@course.Nimetus</td>
                         <td id="IndexTableCourseKeel">@course.Keel</td>
@@ -33,6 +42,16 @@
                             <a id="IndexTableCourseUpdate_BTN" asp-action="Update" asp-controller="LanguageCourses" asp-route-id="@course.Id" class="btn btn-warning">Muuda</a>
                             <a id="IndexTableCourseDelete_BTN" asp-action="Delete" asp-controller="LanguageCourses" asp-route-id="@course.Id" class="btn btn-danger">Kustuta</a>
                         </td >
+=======
+                        <td>@rownumber</td>
+                        <td>@course.Nimetus</td>
+                        <td>@course.Keel</td>
+                        <td>
+                            <a asp-action="Details" asp-controller="LanguageCourses" asp-route-id="@course.Id" class="btn btn-secondary">Andmed</a>
+                            <a asp-action="Update" asp-controller="LanguageCourses" asp-route-id="@course.Id" class="btn btn-warning">Muuda</a>
+                            <a asp-action="Delete" asp-controller="LanguageCourses" asp-route-id="@course.Id" class="btn btn-danger">Kustuta</a>
+                        </td>
+>>>>>>> 60d41fc7dcaccafb5fceaca6724acf37ded8ce96
                     </tr>
                     rownumber++;
                 }
