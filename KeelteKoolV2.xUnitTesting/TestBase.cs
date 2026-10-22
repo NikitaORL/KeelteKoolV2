@@ -32,6 +32,7 @@ namespace KeelteKoolV2.xUnitTesting
             services.AddScoped<ILecturersServices, LecturersServices>();
             services.AddScoped<IFilesServices, FilesServices>();
             services.AddScoped<IHostEnvironment, MockIHostEnvironment>();
+            services.AddScoped<IStudentsServices, StudentsServices>();
 
             services.AddDbContext<KeelteKoolV2Context>
                 (x =>
