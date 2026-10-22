@@ -190,6 +190,23 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.DoesNotContain(students, s => s == null);
         }
 
+        [Fact]
+        public async Task Should_Add_Multiple_Students()
+        {
+            var initialCount = (await Svc<IStudentsServices>().GetAllAsync()).Count();
+
+            await Svc<IStudentsServices>().CreateAsync(new StudentDTO { FirstName = "One", LastName = "1", Email = "1@1.ee" });
+            await Svc<IStudentsServices>().CreateAsync(new StudentDTO { FirstName = "Two", LastName = "2", Email = "2@2.ee" });
+
+            var list = await Svc<IStudentsServices>().GetAllAsync();
+            var currentCount = list.Count();
+
+            Assert.NotNull(list);
+            Assert.Equal(initialCount + 2, currentCount);
+            Assert.True(currentCount > initialCount);
+            Assert.NotEqual(initialCount, currentCount);
+        }
+
 
     }
 }
