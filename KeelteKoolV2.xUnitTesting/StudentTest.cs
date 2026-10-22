@@ -60,7 +60,7 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("mark.madk1d@test.ee", fetched.Email);
         }
 
-
+        //
         [Fact]
         public async Task Should_Update_Student_Successfully()
         {
