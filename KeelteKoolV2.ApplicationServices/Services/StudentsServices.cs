@@ -8,10 +8,10 @@ using System.Text;
 
 namespace KeelteKoolV2.ApplicationServices.Services
 {
-    public class StudentServices : IStudentsServices
+    public class StudentsServices : IStudentsServices
     {
         private readonly KeelteKoolV2Context _context;
-        public StudentServices(KeelteKoolV2Context context)
+        public StudentsServices(KeelteKoolV2Context context)
         {
             _context = context;
         }
