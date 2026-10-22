@@ -39,9 +39,6 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("nikita.fortnite@test.ee", dbItem.Email);
         }
 
-        /// <summary>
-        /// Kontrollib, et olemasoleva õpilase andmete pärimine ID järgi tagastab õiged andmed.
-        /// </summary>
         [Fact]
         public async Task Should_Get_Student_By_Id()
         {
@@ -63,9 +60,7 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("mark.ots@test.ee", fetched.Email);
         }
 
-        /// <summary>
-        /// Kontrollib, et õpilase andmete uuendamine muudab andmebaasis kirjet korrektselt.
-        /// </summary>
+
         [Fact]
         public async Task Should_Update_Student_Successfully()
         {
