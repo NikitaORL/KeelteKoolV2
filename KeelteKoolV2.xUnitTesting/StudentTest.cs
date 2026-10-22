@@ -108,6 +108,23 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Kalle", deleted.FirstName);
         }
 
+        [Fact]
+        public async Task Should_Return_All_Students()
+        {
+            var allBefore = await Svc<IStudentsServices>().GetAllAsync();
+            int initialCount = allBefore.Count();
+
+            await Svc<IStudentsServices>().CreateAsync(new StudentDTO { FirstName = "A", LastName = "B", Email = "a@b.ee" });
+            await Svc<IStudentsServices>().CreateAsync(new StudentDTO { FirstName = "C", LastName = "D", Email = "c@d.ee" });
+
+            var allAfter = await Svc<IStudentsServices>().GetAllAsync();
+
+            Assert.NotNull(allAfter);
+            Assert.True(allAfter.Count() >= initialCount + 2);
+            Assert.Contains(allAfter, s => s.Email == "a@b.ee");
+            Assert.Contains(allAfter, s => s.Email == "c@d.ee");
+            Assert.NotEqual(initialCount, allAfter.Count());
+        }
 
     }
 }
