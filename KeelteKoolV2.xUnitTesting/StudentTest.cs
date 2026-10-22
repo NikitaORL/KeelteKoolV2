@@ -62,5 +62,34 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Ots", fetched.LastName);
             Assert.Equal("mark.ots@test.ee", fetched.Email);
         }
+
+        /// <summary>
+        /// Kontrollib, et õpilase andmete uuendamine muudab andmebaasis kirjet korrektselt.
+        /// </summary>
+        [Fact]
+        public async Task Should_Update_Student_Successfully()
+        {
+            var dto = new StudentDTO
+            {
+                FirstName = "Liis",
+                LastName = "Ilus",
+                Email = "liis@test.ee",
+                CreatedAt = DateTime.Now
+            };
+
+            var created = await Svc<IStudentsServices>().CreateAsync(dto);
+            created.FirstName = "Liisbet";
+            created.Email = "liisbet@test.ee";
+
+            var updated = await Svc<IStudentsServices>().UpdateAsync(created);
+            var dbItem = await Context.Students.FindAsync(created.Id);
+
+            Assert.NotNull(updated);
+            Assert.Equal("Liisbet", dbItem.FirstName);
+            Assert.Equal("Ilus", dbItem.LastName);
+            Assert.Equal("liisbet@test.ee", dbItem.Email);
+            Assert.NotEqual("liis@test.ee", dbItem.Email);
+        }
+
     }
 }
