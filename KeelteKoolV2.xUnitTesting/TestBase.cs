@@ -66,5 +66,7 @@ namespace KeelteKoolV2.xUnitTesting
         {
             return serviceProvider.GetService<T>();
         }
+
+        protected KeelteKoolV2Context Context => Svc<KeelteKoolV2Context>();
     }
 }

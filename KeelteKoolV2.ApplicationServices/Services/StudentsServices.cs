@@ -15,7 +15,7 @@ namespace KeelteKoolV2.ApplicationServices.Services
         {
             _context = context;
         }
-        public async Task<Student> Create(StudentDTO dto)
+        public async Task<Student> CreateAsync(StudentDTO dto)
         {
             //check if not null
             if (dto == null)

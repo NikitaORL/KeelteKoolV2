@@ -8,7 +8,7 @@ namespace KeelteKoolV2.Core.ServiceInterface
 {
     public interface IStudentsServices
     {
-        Task<Student> Create(StudentDTO dto);
+        Task<Student> CreateAsync(StudentDTO dto);
         Task<Student> Update(StudentDTO dto);
         Task<Student> DetailAsync(Guid id);
         Task<Student> Delete(Guid id);
