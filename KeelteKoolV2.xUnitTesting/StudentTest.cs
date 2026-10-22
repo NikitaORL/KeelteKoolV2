@@ -56,8 +56,8 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotNull(fetched);
             Assert.Equal(created.Id, fetched.Id);
             Assert.Equal("Mark", fetched.FirstName);
-            Assert.Equal("Ots", fetched.LastName);
-            Assert.Equal("mark.ots@test.ee", fetched.Email);
+            Assert.Equal("madk1d", fetched.LastName);
+            Assert.Equal("mark.madk1d@test.ee", fetched.Email);
         }
 
 
@@ -178,7 +178,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Throw_When_Dto_Is_Nul()
+        public async Task Should_Throw_When_Dto_Is_Null()
         {
             StudentDTO nullDto = null;
 
