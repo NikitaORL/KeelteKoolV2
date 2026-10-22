@@ -35,6 +35,7 @@ namespace KeelteKoolV2.ApplicationServices.Services
             }
             domain.FirstName = dto.FirstName;
             domain.LastName = dto.LastName;
+            domain.Email = dto.Email;
 
             domain.CreatedAt = DateTime.Now;
             domain.ModifiedAt = DateTime.Now;
