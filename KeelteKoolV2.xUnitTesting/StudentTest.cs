@@ -158,6 +158,26 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Null(checkItem);
         }
 
+        [Fact]
+        public async Task Should_Create_Update_And_Delete_Student()
+        {
+            var dto = new StudentDTO { FirstName = "Test", LastName = "Test", Email = "t@t.ee" };
+            var created = await Svc<IStudentsServices>().CreateAsync(dto);
+
+            created.FirstName = "UpdatedTest";
+            var updated = await Svc<IStudentsServices>().UpdateAsync(created);
+
+            var deleted = await Svc<IStudentsServices>().DeleteAsync(updated.Id);
+            var finalCheck = await Svc<IStudentsServices>().GetByIdAsync(created.Id);
+
+            Assert.NotNull(created);
+            Assert.NotNull(updated);
+            Assert.NotNull(deleted);
+            Assert.Equal("UpdatedTest", updated.FirstName);
+            Assert.Null(finalCheck);
+        }
+
+
 
     }
 }
