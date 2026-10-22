@@ -38,5 +38,29 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Fortnite", dbItem.LastName);
             Assert.Equal("nikita.fortnite@test.ee", dbItem.Email);
         }
+
+        /// <summary>
+        /// Kontrollib, et olemasoleva õpilase andmete pärimine ID järgi tagastab õiged andmed.
+        /// </summary>
+        [Fact]
+        public async Task Should_Get_Student_By_Id()
+        {
+            var dto = new StudentDTO
+            {
+                FirstName = "Mark",
+                LastName = "madk1d",
+                Email = "mark.madk1d@test.ee",
+                CreatedAt = DateTime.Now
+            };
+
+            var created = await Svc<IStudentsServices>().CreateAsync(dto);
+            var fetched = await Svc<IStudentsServices>().GetByIdAsync(created.Id);
+
+            Assert.NotNull(fetched);
+            Assert.Equal(created.Id, fetched.Id);
+            Assert.Equal("Mark", fetched.FirstName);
+            Assert.Equal("Ots", fetched.LastName);
+            Assert.Equal("mark.ots@test.ee", fetched.Email);
+        }
     }
 }
