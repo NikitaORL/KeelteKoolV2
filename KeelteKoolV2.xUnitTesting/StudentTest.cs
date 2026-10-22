@@ -14,7 +14,7 @@ namespace KeelteKoolV2.xUnitTesting
     public class StudentTests : TestBase
     {
         [Fact]
-        public async Task Should_Add_Student_When_Data_Is_Valid()
+        public async Task Should_Add_Student()
         {
             // Arrange
             var dto = new StudentDTO
@@ -40,7 +40,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Get_Student_By_Id()
+        public async Task Should_Get_Student()
         {
             var dto = new StudentDTO
             {
@@ -60,9 +60,8 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("mark.madk1d@test.ee", fetched.Email);
         }
 
-        //
         [Fact]
-        public async Task Should_Update_Student_Successfully()
+        public async Task Should_Update_Student()
         {
             var dto = new StudentDTO
             {
@@ -87,7 +86,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Delete_Student_Successfully()
+        public async Task Should_Delete_Student()
         {
             var dto = new StudentDTO
             {
@@ -109,7 +108,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Return_All_Students()
+        public async Task Should_Get_All_Students()
         {
             var allBefore = await Svc<IStudentsServices>().GetAllAsync();
             int initialCount = allBefore.Count();
@@ -129,7 +128,7 @@ namespace KeelteKoolV2.xUnitTesting
         //Negatiivsed
 
         [Fact]
-        public async Task Should_Not_Get_Student_When_Id_Does_Not_Exist()
+        public async Task Should_Not_Get_Missing_Student()
         {
             var nonExistentId = Guid.NewGuid();
             var result = await Svc<IStudentsServices>().GetByIdAsync(nonExistentId);
@@ -142,7 +141,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Not_Delete_Student_When_Id_Is_Invalid()
+        public async Task Should_Not_Delete_Missing_Student()
         {
             var invalidId = Guid.NewGuid();
             var countBefore = (await Svc<IStudentsServices>().GetAllAsync()).Count();
@@ -159,7 +158,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Create_Update_And_Delete_Student()
+        public async Task Should_Run_Full_Student_Cycle()
         {
             var dto = new StudentDTO { FirstName = "Test", LastName = "Test", Email = "t@t.ee" };
             var created = await Svc<IStudentsServices>().CreateAsync(dto);
@@ -178,7 +177,7 @@ namespace KeelteKoolV2.xUnitTesting
         }
 
         [Fact]
-        public async Task Should_Throw_When_Dto_Is_Null()
+        public async Task Should_Throw_On_Null_Dto()
         {
             StudentDTO nullDto = null;
 
