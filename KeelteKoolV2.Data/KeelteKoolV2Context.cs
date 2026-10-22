@@ -10,12 +10,13 @@ namespace KeelteKoolV2.Data
 {
     public class KeelteKoolV2Context : IdentityDbContext<ApplicationUser>
     {
-        public KeelteKoolV2Context(DbContextOptions<KeelteKoolV2Context> options):base (options) 
+        public KeelteKoolV2Context(DbContextOptions<KeelteKoolV2Context> options) : base(options)
         {
         }
-            //set tables here
-            public DbSet<LanguageCourse> LanguageCourses { get; set; }
-            public DbSet<Lecturer> Lecturers { get; set; }
-            public DbSet<FileToDatabase> Files { get; set; }
+        //set tables here
+        public DbSet<LanguageCourse> LanguageCourses { get; set; }
+        public DbSet<Lecturer> Lecturers { get; set; }
+        public DbSet<Student> Students { get; set; }
+        public DbSet<FileToDatabase> Files { get; set; }
     }
 }
