@@ -177,6 +177,18 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Null(finalCheck);
         }
 
+        [Fact]
+        public async Task Should_Throw_When_Dto_Is_Nul()
+        {
+            StudentDTO nullDto = null;
+
+            await Assert.ThrowsAsync<ArgumentNullException>(
+                () => Svc<IStudentsServices>().CreateAsync(nullDto));
+
+            var students = await Svc<IStudentsServices>().GetAllAsync();
+            Assert.NotNull(students);
+            Assert.DoesNotContain(students, s => s == null);
+        }
 
 
     }
