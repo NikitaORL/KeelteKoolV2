@@ -141,6 +141,23 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.DoesNotContain(allStudents, s => s.Id == nonExistentId);
         }
 
+        [Fact]
+        public async Task Should_Not_Delete_Student_When_Id_Is_Invalid()
+        {
+            var invalidId = Guid.NewGuid();
+            var countBefore = (await Svc<IStudentsServices>().GetAllAsync()).Count();
+
+            var result = await Svc<IStudentsServices>().DeleteAsync(invalidId);
+
+            var countAfter = (await Svc<IStudentsServices>().GetAllAsync()).Count();
+            var checkItem = await Context.Students.FindAsync(invalidId);
+
+            Assert.Null(result);
+            Assert.Equal(countBefore, countAfter);
+            Assert.NotEqual(Guid.Empty, invalidId);
+            Assert.Null(checkItem);
+        }
+
 
     }
 }
