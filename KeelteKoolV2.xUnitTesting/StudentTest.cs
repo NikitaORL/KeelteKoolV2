@@ -86,5 +86,28 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotEqual("liis@test.ee", dbItem.Email);
         }
 
+        [Fact]
+        public async Task Should_Delete_Student_Successfully()
+        {
+            var dto = new StudentDTO
+            {
+                FirstName = "Kalle",
+                LastName = "Kivi",
+                Email = "kalle@test.ee",
+                CreatedAt = DateTime.Now
+            };
+
+            var created = await Svc<IStudentsServices>().CreateAsync(dto);
+            var deleted = await Svc<IStudentsServices>().DeleteAsync(created.Id);
+            var dbItem = await Context.Students.FindAsync(created.Id);
+
+            Assert.NotNull(deleted);
+            Assert.Equal(created.Id, deleted.Id);
+            Assert.Null(dbItem);
+            Assert.NotEqual(Guid.Empty, deleted.Id);
+            Assert.Equal("Kalle", deleted.FirstName);
+        }
+
+
     }
 }
