@@ -126,5 +126,21 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotEqual(initialCount, allAfter.Count());
         }
 
+        //Negatiivsed
+
+        [Fact]
+        public async Task Should_Not_Get_Student_When_Id_Does_Not_Exist()
+        {
+            var nonExistentId = Guid.NewGuid();
+            var result = await Svc<IStudentsServices>().GetByIdAsync(nonExistentId);
+            var allStudents = await Svc<IStudentsServices>().GetAllAsync();
+
+            Assert.Null(result);
+            Assert.NotEqual(Guid.Empty, nonExistentId);
+            Assert.NotNull(allStudents);
+            Assert.DoesNotContain(allStudents, s => s.Id == nonExistentId);
+        }
+
+
     }
 }
