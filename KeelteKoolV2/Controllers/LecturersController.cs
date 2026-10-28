@@ -9,23 +9,20 @@ namespace KeelteKoolV2.Controllers
 {
     public class LecturersController : Controller
     {
-        [HttpGet]
-        public IActionResult Create()
+        private readonly KeelteKoolV2Context _context;
+        private readonly ILecturersServices _lecturersServices;
+        private readonly IFilesServices _filesServices;
+
+        public LecturersController(
+            KeelteKoolV2Context context,
+            ILecturersServices lecturersServices,
+            IFilesServices filesServices)
         {
-            return View();
+            _context = context;
+            _lecturersServices = lecturersServices;
+            _filesServices = filesServices;
+
         }
-
-        [HttpPost]
-        public async Task<IActionResult> Create(LecturerDTO dto)
-        {
-            if (ModelState.IsValid)
-            {
-                await _lecturersServices.Create(dto);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(dto);
-        }
-
-
     }
 }
+
