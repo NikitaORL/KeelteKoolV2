@@ -24,9 +24,11 @@ namespace KeelteKoolV2.Controllers
 
         }
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            
+            var lecturers = await _lecturersServices.GetAllAsync();
+            return View(lecturers);
         }
 
         [HttpGet]
@@ -45,6 +47,8 @@ namespace KeelteKoolV2.Controllers
             }
             return View(dto);
         }
+
+
     }
 
 }
