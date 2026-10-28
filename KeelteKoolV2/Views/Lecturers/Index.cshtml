@@ -1,7 +1,29 @@
-﻿@{
+﻿@model IEnumerable<KeelteKoolV2.Core.DTO.LecturerDTO>
+
+@{
     ViewBag.Title = "Õppejõud";
 }
 
 <div class="h1">Õppejõud (Lecturers)</div>
 
-<a asp-action="Create" class="btn btn-dark">Lisa uus õppejõud</a>
+<a asp-action="Create" class="btn btn-dark mb-3">Lisa uus õppejõud</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Eesnimi</th>
+            <th>Perekonnanimi</th>
+            <th>Kvalifikatsioon</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var lecturer in Model)
+        {
+            <tr>
+                <td>@lecturer.FirstName</td>
+                <td>@lecturer.LastName</td>
+                <td>@lecturer.Qualifications</td>
+            </tr>
+        }
+    </tbody>
+</table>
