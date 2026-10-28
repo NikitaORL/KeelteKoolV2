@@ -23,6 +23,12 @@ namespace KeelteKoolV2.Controllers
             _filesServices = filesServices;
 
         }
+        [HttpGet]
+        public IActionResult Index()
+        {
+            return View();
+        }
     }
+
 }
 
