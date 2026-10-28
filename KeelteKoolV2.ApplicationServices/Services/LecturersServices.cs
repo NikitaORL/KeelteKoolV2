@@ -15,36 +15,26 @@ namespace KeelteKoolV2.ApplicationServices.Services
         {
             _context = context;
         }
-        public async Task<Lecturer> Create(LecturerDTO dto)
+        public async Task<LecturerDTO> Create(LecturerDTO dto)
         {
-            //check if not null
-            if (dto == null)
-            {
-                return null;
-            }
-            //convert to domain-type
-            Lecturer domain = new Lecturer();
-            domain.Id = Guid.NewGuid();
-            if(dto.FirstName.Length < 1)
-            {
-                dto.FirstName = "Jane";
-            }
-            if(dto.LastName.Length < 1)
-            {
-                dto.LastName = "Doe";
-            }
-            domain.FirstName = dto.FirstName;
-            domain.LastName = dto.LastName;
-            domain.Qualifications = dto.Qualifications;
-            domain.UserID = dto.UserID;
+            if (dto == null) return null;
 
-            domain.CreatedAt = DateTime.Now;
-            domain.ModifiedAt = DateTime.Now;
+            var domain = new Lecturer
+            {
+                Id = Guid.NewGuid(),
+                FirstName = string.IsNullOrEmpty(dto.FirstName) ? "Jane" : dto.FirstName,
+                LastName = string.IsNullOrEmpty(dto.LastName) ? "Doe" : dto.LastName,
+                Qualifications = dto.Qualifications,
+                UserID = dto.UserID,
+                CreatedAt = DateTime.Now,
+                ModifiedAt = DateTime.Now
+            };
 
             await _context.Lecturers.AddAsync(domain);
             await _context.SaveChangesAsync();
 
-            return domain;
+            dto.Id = domain.Id;
+            return dto;
         }
 
         public Task<Lecturer> Delete(Guid id)
