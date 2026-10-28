@@ -103,6 +103,16 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Testicles", result.Qualifications);
         }
 
-        
+        [Fact]
+        public async Task Should_ReturnNull_WhenLecturerDoesNotExist()
+        {
+            var result = await Svc<ILecturersServices>().DetailAsync(Guid.NewGuid());
+
+            Assert.Null(result);
+            Assert.True(result == null);
+            Assert.False(result != null);
+            Assert.Equal(null, result);
+            Assert.IsType<LecturerDTO>(result);
+        }
     }
 }
