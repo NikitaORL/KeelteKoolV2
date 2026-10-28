@@ -24,6 +24,11 @@ namespace KeelteKoolV2.xUnitTesting
 
             //kontroll
             Assert.NotNull(result);
+            Assert.NotEqual(Guid.Empty, result.Id);
+            Assert.Equal("Test", result.FirstName);
+            Assert.Equal("Test", result.LastName);
+            Assert.Equal("Testicles", result.Qualifications);
+
         }
 
         //details test
