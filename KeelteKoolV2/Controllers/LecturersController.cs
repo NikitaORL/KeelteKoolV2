@@ -28,6 +28,23 @@ namespace KeelteKoolV2.Controllers
         {
             return View();
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create(LecturerDTO dto)
+        {
+            if (ModelState.IsValid)
+            {
+                await _lecturersServices.Create(dto);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(dto);
+        }
     }
 
 }
