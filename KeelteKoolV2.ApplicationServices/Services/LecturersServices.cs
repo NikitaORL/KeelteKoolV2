@@ -5,6 +5,8 @@ using KeelteKoolV2.Data;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace KeelteKoolV2.ApplicationServices.Services
 {
@@ -37,9 +39,21 @@ namespace KeelteKoolV2.ApplicationServices.Services
             return dto;
         }
 
-        public Task<Lecturer> Delete(Guid id)
+        public async Task<LecturerDTO> Delete(Guid id)
         {
-            return null;
+            var domain = await _context.Lecturers.FirstOrDefaultAsync(x => x.Id == id);
+            if (domain == null) return null;
+
+            _context.Lecturers.Remove(domain);
+            await _context.SaveChangesAsync();
+
+            return new LecturerDTO
+            {
+                Id = domain.Id,
+                FirstName = domain.FirstName,
+                LastName = domain.LastName,
+                Qualifications = domain.Qualifications
+            };
         }
 
         public async Task<LecturerDTO> DetailAsync(Guid id)
@@ -57,9 +71,20 @@ namespace KeelteKoolV2.ApplicationServices.Services
             };
         }
 
-        public Task<Lecturer> Update(LecturerDTO dto)
+        public async Task<LecturerDTO> Update(LecturerDTO dto)
         {
-            return null;
+            var domain = await _context.Lecturers.FirstOrDefaultAsync(x => x.Id == dto.Id);
+            if (domain == null) return null;
+
+            domain.FirstName = dto.FirstName;
+            domain.LastName = dto.LastName;
+            domain.Qualifications = dto.Qualifications;
+            domain.ModifiedAt = DateTime.Now;
+
+            _context.Lecturers.Update(domain);
+            await _context.SaveChangesAsync();
+
+            return dto;
         }
     }
 }
