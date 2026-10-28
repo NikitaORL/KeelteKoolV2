@@ -68,12 +68,17 @@ namespace KeelteKoolV2.xUnitTesting
             updatedinfo.FirstName = "TestUusinfo";
             updatedinfo.LastName = "Test2222222222";
             updatedinfo.Qualifications = "Maximum OwO";
+            updatedinfo.Id = createdLecturer.Id;
 
             //tegevus
             var result = await Svc<ILecturersServices>().Update(updatedinfo);
 
             //kontroll
             Assert.NotNull(result);
+            Assert.Equal(createdLecturer.Id, result.Id);
+            Assert.Equal("TestUusinfo", result.FirstName);
+            Assert.Equal("Test2222222222", result.LastName);
+            Assert.Equal("Maximum OwO", result.Qualifications);
         }
 
         //delete test
