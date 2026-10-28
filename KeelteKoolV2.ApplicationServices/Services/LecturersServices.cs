@@ -42,9 +42,19 @@ namespace KeelteKoolV2.ApplicationServices.Services
             return null;
         }
 
-        public Task<Lecturer> DetailAsync(Guid id)
+        public async Task<LecturerDTO> DetailAsync(Guid id)
         {
-            return null;
+            var domain = await _context.Lecturers.FirstOrDefaultAsync(x => x.Id == id);
+            if (domain == null) return null;
+
+            return new LecturerDTO
+            {
+                Id = domain.Id,
+                FirstName = domain.FirstName,
+                LastName = domain.LastName,
+                Qualifications = domain.Qualifications,
+                UserID = domain.UserID
+            };
         }
 
         public Task<Lecturer> Update(LecturerDTO dto)
