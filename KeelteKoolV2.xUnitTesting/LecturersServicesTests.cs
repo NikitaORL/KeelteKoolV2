@@ -1,8 +1,7 @@
 ﻿using KeelteKoolV2.Core.DTO;
 using KeelteKoolV2.Core.ServiceInterface;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace KeelteKoolV2.xUnitTesting
@@ -17,21 +16,18 @@ namespace KeelteKoolV2.xUnitTesting
             dto.FirstName = "Test";
             dto.LastName = "Test";
             dto.Qualifications = "Testicles";
-            //dto.Image = 
 
             //tegevus
             var result = await Svc<ILecturersServices>().Create(dto);
 
-            //kontroll
+            //kontroll (5 asserti)
             Assert.NotNull(result);
             Assert.NotEqual(Guid.Empty, result.Id);
             Assert.Equal("Test", result.FirstName);
             Assert.Equal("Test", result.LastName);
             Assert.Equal("Testicles", result.Qualifications);
-
         }
 
-        //details test
         [Fact]
         public async Task Should_GetLecturerDetails_WhenGuidISNotNull()
         {
@@ -45,7 +41,7 @@ namespace KeelteKoolV2.xUnitTesting
             //tegevus
             var result = await Svc<ILecturersServices>().DetailAsync(createdLecturer.Id);
 
-            //kontroll
+            //kontroll (5 asserti)
             Assert.NotNull(result);
             Assert.Equal(createdLecturer.Id, result.Id);
             Assert.Equal("Test", result.FirstName);
@@ -53,7 +49,6 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Testicles", result.Qualifications);
         }
 
-        //update test
         [Fact]
         public async Task Should_UpdateLecturerWithNewData_WhenDataIsDifferentFromDB()
         {
@@ -73,7 +68,7 @@ namespace KeelteKoolV2.xUnitTesting
             //tegevus
             var result = await Svc<ILecturersServices>().Update(updatedinfo);
 
-            //kontroll
+            //kontroll (5 asserti)
             Assert.NotNull(result);
             Assert.Equal(createdLecturer.Id, result.Id);
             Assert.Equal("TestUusinfo", result.FirstName);
@@ -81,7 +76,6 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Maximum OwO", result.Qualifications);
         }
 
-        //delete test
         [Fact]
         public async Task Should_DeleteLecturer_WhenValidIDIsGiven()
         {
@@ -95,7 +89,7 @@ namespace KeelteKoolV2.xUnitTesting
             //tegevus
             var result = await Svc<ILecturersServices>().Delete(createdLecturer.Id);
 
-            //kontroll
+            //kontroll (5 asserti)
             Assert.NotNull(result);
             Assert.Equal(createdLecturer.Id, result.Id);
             Assert.Equal("Test", result.FirstName);
@@ -106,13 +100,15 @@ namespace KeelteKoolV2.xUnitTesting
         [Fact]
         public async Task Should_ReturnNull_WhenLecturerDoesNotExist()
         {
+            //tegevus
             var result = await Svc<ILecturersServices>().DetailAsync(Guid.NewGuid());
 
+            //kontroll (5 asserti)
             Assert.Null(result);
             Assert.True(result == null);
             Assert.False(result != null);
-            Assert.Equal(null, result);
             Assert.IsType<LecturerDTO>(result);
+            Assert.Equal(null, result);
         }
     }
 }
