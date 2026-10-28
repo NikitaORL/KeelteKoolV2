@@ -47,6 +47,10 @@ namespace KeelteKoolV2.xUnitTesting
 
             //kontroll
             Assert.NotNull(result);
+            Assert.Equal(createdLecturer.Id, result.Id);
+            Assert.Equal("Test", result.FirstName);
+            Assert.Equal("Test", result.LastName);
+            Assert.Equal("Testicles", result.Qualifications);
         }
 
         //update test
