@@ -6,6 +6,7 @@ namespace KeelteKoolV2.Core.ServiceInterface
 {
     public interface ILecturersServices
     {
+        Task<IEnumerable<LecturerDTO>> GetAllAsync();
         Task<LecturerDTO> Create(LecturerDTO dto);
         Task<LecturerDTO> DetailAsync(Guid id);
         Task<LecturerDTO> Update(LecturerDTO dto);
