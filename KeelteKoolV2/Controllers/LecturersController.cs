@@ -48,12 +48,26 @@ namespace KeelteKoolV2.Controllers
             return View(dto);
         }
 
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Delete(Guid id)
         {
-            await _lecturersServices.Delete(id);
-            return RedirectToAction(nameof(Index));
+            var lecturer = await _lecturersServices.DetailAsync(id);
+            if (lecturer == null)
+            {
+                return NotFound();
+            }
+            return View(lecturer);
         }
+
+       
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
+        {
+            await _lecturersServices.Delete(id);
+            return RedirectToAction(nameof(Index)); 
+        }
+
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(Guid id)
@@ -62,6 +76,8 @@ namespace KeelteKoolV2.Controllers
             if (lecturer == null) return NotFound();
             return View(lecturer);
         }
+
+       
 
         [HttpPost]
         public async Task<IActionResult> Edit(LecturerDTO dto)
