@@ -245,7 +245,29 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.Equal("Vigane e-posti addres", mailError);
             Assert.Equal("", firstNameError);
             Assert.False(isObjectFound);
+        }
 
+        [Fact]
+        [Order(7)]
+        public void Should_NotCreateStudent_WhenBackToListIsClicked()
+        {
+            //Uleseade
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            driver.FindElement(By.LinkText("Create New")).Click();
+            string canceldGuid = DataEntry_Student(driver);
+
+            //tegevus
+            driver.FindElement(By.LinkText("Back To List")).Click();
+            Thread.Sleep(1000);
+
+            //kontroll
+            string url = driver.Url;
+            IWebElement? row = FindStudentRow(driver, canceldGuid);
+            bool isObjectFound = row != null;
+            driver.Quit();
+
+            Assert.EndsWith("/Studets", url);
+            Assert.False(isObjectFound);
         }
 
         //oluline funktsioonid 
