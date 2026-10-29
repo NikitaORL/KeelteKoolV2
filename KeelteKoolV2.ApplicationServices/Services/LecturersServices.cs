@@ -86,5 +86,18 @@ namespace KeelteKoolV2.ApplicationServices.Services
 
             return dto;
         }
+        public async Task<IEnumerable<LecturerDTO>> GetAllAsync()
+        {
+            var lecturers = await _context.Lecturers.ToListAsync();
+
+            return lecturers.Select(x => new LecturerDTO
+            {
+                Id = x.Id,
+                FirstName = x.FirstName,
+                LastName = x.LastName,
+                Qualifications = x.Qualifications,
+                UserID = x.UserID
+            }).ToList();
+        }
     }
 }

@@ -25,4 +25,8 @@
     <ProjectReference Include="..\KeelteKoolV2.Data\KeelteKoolV2.Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Lecturers\" />
+  </ItemGroup>
+
 </Project>
