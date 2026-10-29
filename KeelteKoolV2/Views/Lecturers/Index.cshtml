@@ -8,12 +8,13 @@
 
 <a asp-action="Create" class="btn btn-dark mb-3">Lisa uus õppejõud</a>
 
-<table class="table">
+<table class="table table-striped">
     <thead>
         <tr>
             <th>Eesnimi</th>
             <th>Perekonnanimi</th>
             <th>Kvalifikatsioon</th>
+            <th>Tegevused</th> <!-- Новый столбец -->
         </tr>
     </thead>
     <tbody>
@@ -23,6 +24,10 @@
                 <td>@lecturer.FirstName</td>
                 <td>@lecturer.LastName</td>
                 <td>@lecturer.Qualifications</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@lecturer.Id" class="btn btn-warning btn-sm">Muuda</a>
+                    <a asp-action="Delete" asp-route-id="@lecturer.Id" class="btn btn-danger btn-sm">Kustuta</a>
+                </td>
             </tr>
         }
     </tbody>
