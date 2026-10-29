@@ -55,6 +55,14 @@ namespace KeelteKoolV2.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var lecturer = await _lecturersServices.DetailAsync(id);
+            if (lecturer == null) return NotFound();
+            return View(lecturer);
+        }
+
 
     }
 
