@@ -48,6 +48,13 @@ namespace KeelteKoolV2.Controllers
             return View(dto);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            await _lecturersServices.Delete(id);
+            return RedirectToAction(nameof(Index));
+        }
+
 
     }
 
