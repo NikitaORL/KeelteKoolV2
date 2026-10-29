@@ -63,6 +63,17 @@ namespace KeelteKoolV2.Controllers
             return View(lecturer);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Edit(LecturerDTO dto)
+        {
+            if (ModelState.IsValid)
+            {
+                await _lecturersServices.Update(dto);
+                return RedirectToAction(nameof(Index));
+            }
+            return View(dto);
+        }
+
 
     }
 
