@@ -183,6 +183,35 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.False(isObjectFoundAfter);
         }
 
+        /// <summary>
+        /// Test vajutab loomisvormil "Create" ilma andmeid sisestamata. Kontrollib, et kasutaja jääb
+        /// loomislehele ja iga välja all kuvatakse õige veateade.
+        /// </summary>
+        [Fact]
+        [Order(5)]
+        public void Should_ShowErrors_WhenCreateFormIsEmpty()
+        {
+            /* ülesseade */
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            driver.FindElement(By.LinkText("Create New")).Click();
+
+            /* tegevus */
+            driver.FindElement(By.CssSelector("input[value='Create']")).Click();
+            Thread.Sleep(1000);
+
+            /* kontroll */
+            string url = driver.Url;
+            string firstNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='FirstName']")).Text;
+            string lastNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='LastName']")).Text;
+            string emailError = driver.FindElement(By.CssSelector("span[data-valmsg-for='Email']")).Text;
+            driver.Quit();
+
+            Assert.Contains("/Students/Create", url);
+            Assert.Equal("Eesnimi on kohustuslik", firstNameError);
+            Assert.Equal("Perenimi on kohustuslik", lastNameError);
+            Assert.Equal("E-post on kohustuslik", emailError);
+        }
+
         //oluline funktsioonid 
         private static IWebElement? FindStudentRow(IWebDriver driver, string firstName)
         {
