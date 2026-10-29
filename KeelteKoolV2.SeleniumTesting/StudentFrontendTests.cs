@@ -1,4 +1,5 @@
 using OpenQA.Selenium;
+using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
 using System;
 using System.Buffers.Text;
@@ -145,6 +146,42 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.NotEqual("selenium@test.ee", email);
         }
 
+        /// <summary>
+        /// Test kustutab eelnevalt loodud õpilase. Kontrollib, et kustutamise lehel on õige õpilane
+        /// ja pärast kinnitamist ei ole õpilast enam nimekirjas.
+        /// </summary>
+        [Fact]
+        [Order(4)]
+        public void Should_DeleteStudent_FromDeleteView()
+        {
+            /* ülesseade */
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+
+            /* tegevus */
+            bool isObjectFoundBefore = row != null;
+            if (row != null)
+            {
+                row.FindElement(By.LinkText("Delete")).Click();
+            }
+            Thread.Sleep(1000);
+            string deleteUrl = driver.Url;
+            string deleteViewFirstName = driver.FindElements(By.TagName("dd"))[0].Text;
+            driver.FindElement(By.CssSelector("input[value='Delete']")).Click();
+            Thread.Sleep(1000);
+
+            /* kontroll */
+            string url = driver.Url;
+            IWebElement? deletedRow = FindStudentRow(driver, thisRunGuid);
+            bool isObjectFoundAfter = deletedRow != null;
+            driver.Quit();
+
+            Assert.True(isObjectFoundBefore);
+            Assert.Contains("/Students/Delete", deleteUrl);
+            Assert.Equal(thisRunGuid, deleteViewFirstName);
+            Assert.EndsWith("/Students", url);
+            Assert.False(isObjectFoundAfter);
+        }
 
         //oluline funktsioonid 
         private static IWebElement? FindStudentRow(IWebDriver driver, string firstName)
@@ -175,9 +212,10 @@ namespace KeelteKoolV2.SeleniumTesting
             IWebDriver driver = new FirefoxDriver(); //brauserit juhtiv ja seal tegutsev draiver
             driver.Url = "https://localhost:7191/"; //navigeeritav aadress
             Thread.Sleep(3000);
-            IWebElement navigateToStudents = driver.FindElement(By.LinkText("Students")); //otsime testitava osa lingi
-            navigateToStudents.Click();
+            IWebElement navigateToLanguageCourse = driver.FindElement(By.LinkText("Keelekursused"));//otsime tesitava osa lingi
+            navigateToLanguageCourse.Click(); //simuleeritud tegevus elemendiga, antud juhul klikk
             return driver;
         }
+
     }
 }
