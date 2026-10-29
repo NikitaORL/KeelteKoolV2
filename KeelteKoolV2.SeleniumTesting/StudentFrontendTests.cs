@@ -6,6 +6,7 @@ using OpenQA.Selenium.Remote;
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
 using Xunit;
@@ -274,6 +275,39 @@ namespace KeelteKoolV2.SeleniumTesting
 
             Assert.EndsWith("/Studets", url);
             Assert.False(isObjectFound);
+        }
+        /// <summary>
+        /// Test avab avalehe ja vajutab menüüs lingile "Students". Kontrollib, et avaneb õpilaste
+        /// nimekiri: õige aadress, pealkiri ja tabeli veerupäised.
+        /// </summary>
+        [Fact]
+        [Order(8)]
+        public void Should_OpenStudentsList_FromNavbar()
+        {
+            //Uleseade
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            driver.Url = "https://localhost:7191/";
+            Thread.Sleep(1000);
+
+            //tegevus
+            driver.FindElement(By.LinkText("Students")).Click();
+            Thread.Sleep(1000);
+
+            //kontroll
+            string url = driver.Url;
+            string heading = driver.FindElement(By.TagName("h1")).Text;
+            List<IWebElement> headers = driver.FindElements(By.TagName("th")).ToList();
+            string header1 = headers[0].Text;
+            string header2 = headers[1].Text;
+            string header3 = headers[2].Text;
+            driver.Quit();
+
+            Assert.EndsWith("/Students", url);
+            Assert.Equal("Students", heading);
+            Assert.Equal("Eesnimi", header1);
+            Assert.Equal("Perenimi", header2);
+            Assert.Equal("E-post", header3);
+
         }
 
         //oluline funktsioonid 
