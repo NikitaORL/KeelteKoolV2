@@ -1,9 +1,12 @@
 using OpenQA.Selenium;
+using OpenQA.Selenium.DevTools.V153.Security;
 using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Remote;
 using System;
 using System.Buffers.Text;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using Xunit;
 
@@ -210,6 +213,39 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.Equal("Eesnimi on kohustuslik", firstNameError);
             Assert.Equal("Perenimi on kohustuslik", lastNameError);
             Assert.Equal("E-post on kohustuslik", emailError);
+        }
+
+        [Fact]
+        [Order(6)]
+        public void Should_ShowError_WhenEmailIsValid()
+        {
+            //Ulesseade
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            driver.FindElement(By.LinkText("Create New")).Click();
+            string invalidGuid = Guid.NewGuid().ToString();
+            driver.FindElement(By.Id("FirstName")).SendKeys(invalidGuid);
+            driver.FindElement(By.Id("LastName")).SendKeys(invalidGuid);
+            driver.FindElement(By.Id("Email")).SendKeys(invalidGuid);
+
+            // tegevus
+            driver.FindElement(By.CssSelector("input[value='Create']")).Click();
+            Thread.Sleep(1000);
+
+            //kontroll
+            string url = driver.Url;
+            string mailError = driver.FindElement(By.CssSelector("span[data-valmsg-for='Email']")).Text;
+            string firstNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='FirstName']")).Text;
+            driver.FindElement(By.LinkText("Back to List")).Click();
+            Thread.Sleep(1000);
+            IWebElement? row = FindStudentRow(driver, invalidGuid);
+            bool isObjectFound = row != null;
+            driver.Quit();
+
+            Assert.Contains("/Students/Create", url);
+            Assert.Equal("Vigane e-posti addres", mailError);
+            Assert.Equal("", firstNameError);
+            Assert.False(isObjectFound);
+
         }
 
         //oluline funktsioonid 
