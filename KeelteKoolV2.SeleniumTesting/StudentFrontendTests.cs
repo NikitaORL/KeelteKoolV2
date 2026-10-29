@@ -52,8 +52,47 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.Equal("selenium@test.ee", email);
         }
 
-        //oluline funktsioonid 
 
+        /// <summary>
+        /// Test avab eelnevalt loodud õpilase Details lehe ja kontrollib, et lehel on
+        /// samad andmed mis loomisel sisestati ning loomise kuupäev on täidetud.
+        /// </summary>
+        [Fact]
+        [Order(2)]
+        public void Should_ShowDetailsOfStudent_WithPreviouslyUniqueData()
+        {
+            /* ülesseade */
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+
+            /* tegevus */
+            bool isObjectFound = row != null;
+            if (row != null)
+            {
+                row.FindElement(By.LinkText("Details")).Click();
+            }
+            Thread.Sleep(1000);
+            string url = driver.Url;
+            string heading = driver.FindElement(By.TagName("h1")).Text;
+            List<IWebElement> values = driver.FindElements(By.TagName("dd")).ToList();
+            string details_firstName = values[0].Text;
+            string details_lastName = values[1].Text;
+            string details_email = values[2].Text;
+            string details_createdAt = values[3].Text;
+            driver.Quit();
+
+            /* kontroll */
+            Assert.True(isObjectFound);
+            Assert.Contains("/Students/Details", url);
+            Assert.Equal("Student Details", heading);
+            Assert.Equal(thisRunGuid, details_firstName);
+            Assert.Equal("Selenium", details_lastName);
+            Assert.Equal("selenium@test.ee", details_email);
+            Assert.NotEmpty(details_createdAt);
+            Assert.Contains(DateTime.Now.Year.ToString(), details_createdAt);
+        }
+
+        //oluline funktsioonid 
         private static IWebElement? FindStudentRow(IWebDriver driver, string firstName)
         {
             IWebElement table = driver.FindElement(By.TagName("table"));
@@ -77,7 +116,6 @@ namespace KeelteKoolV2.SeleniumTesting
             driver.FindElement(By.Id("Email")).SendKeys("selenium@test.ee");
             return generatedId.ToString();
         }
-
         private static IWebDriver TestSetup_NavigateToIndex()
         {
             IWebDriver driver = new FirefoxDriver(); //brauserit juhtiv ja seal tegutsev draiver
