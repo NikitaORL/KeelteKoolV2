@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
 using System;
+using System.Buffers.Text;
 using System.Collections.Generic;
 using System.Text;
 using Xunit;
@@ -91,6 +92,59 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.NotEmpty(details_createdAt);
             Assert.Contains(DateTime.Now.Year.ToString(), details_createdAt);
         }
+
+        /// <summary>
+        /// Test muudab eelnevalt loodud õpilase perenime ja e-posti (eesnimi jääb samaks, et õpilast leida).
+        /// Kontrollib, et nimekirjas on uued väärtused ja vanad väärtused on kadunud.
+        /// </summary>
+        [Fact]
+        [Order(3)]
+        public void Should_UpdateStudent_WithNewData()
+        {
+            /* ülesseade */
+            IWebDriver driver = TestSetup_NavigateToIndex();
+            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+
+            /* tegevus */
+            bool isObjectFound = row != null;
+            if (row != null)
+            {
+                row.FindElement(By.LinkText("Edit")).Click();
+            }
+            Thread.Sleep(1000);
+            IWebElement lastNameInput = driver.FindElement(By.Id("LastName"));
+            lastNameInput.Clear();
+            lastNameInput.SendKeys("Uuendatud");
+            IWebElement emailInput = driver.FindElement(By.Id("Email"));
+            emailInput.Clear();
+            emailInput.SendKeys("uuendatud@test.ee");
+            driver.FindElement(By.CssSelector("input[value='Save']")).Click();
+            Thread.Sleep(1000);
+
+            /* kontroll */
+            string url = driver.Url;
+            IWebElement? updatedRow = FindStudentRow(driver, thisRunGuid);
+            string firstName = "";
+            string lastName = "";
+            string email = "";
+            if (updatedRow != null)
+            {
+                List<IWebElement> cells = updatedRow.FindElements(By.TagName("td")).ToList();
+                firstName = cells[0].Text;
+                lastName = cells[1].Text;
+                email = cells[2].Text;
+            }
+            driver.Quit();
+
+            Assert.True(isObjectFound);
+            Assert.EndsWith("/Students", url);
+            Assert.Equal(thisRunGuid, firstName);
+            Assert.Equal("Uuendatud", lastName);
+            Assert.Equal("uuendatud@test.ee", email);
+            Assert.NotEqual("Selenium", lastName);
+            Assert.NotEqual("selenium@test.ee", email);
+        }
+
 
         //oluline funktsioonid 
         private static IWebElement? FindStudentRow(IWebDriver driver, string firstName)
