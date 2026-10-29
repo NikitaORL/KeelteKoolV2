@@ -214,7 +214,10 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.Equal("Perenimi on kohustuslik", lastNameError);
             Assert.Equal("E-post on kohustuslik", emailError);
         }
-
+        /// <summary>
+        /// Test sisestab e-posti väljale vigase aadressi (ilma @ märgita). Kontrollib, et kuvatakse
+        /// veateade, kasutaja jääb loomislehele ja õpilast nimekirja ei lisata.
+        /// </summary>
         [Fact]
         [Order(6)]
         public void Should_ShowError_WhenEmailIsValid()
@@ -246,7 +249,10 @@ namespace KeelteKoolV2.SeleniumTesting
             Assert.Equal("", firstNameError);
             Assert.False(isObjectFound);
         }
-
+        /// <summary>
+        /// Test täidab loomisvormi, kuid vajutab "Back to List" ilma salvestamata. Kontrollib, et
+        /// kasutaja jõuab nimekirja tagasi ja õpilast ei ole loodud.
+        /// </summary>
         [Fact]
         [Order(7)]
         public void Should_NotCreateStudent_WhenBackToListIsClicked()
