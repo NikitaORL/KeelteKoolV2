@@ -6,7 +6,7 @@ namespace KeelteKoolV2.Models.Accounts
     {
         [Required]
         [EmailAddress]
-        [Display(Name = "Emailiaadress")]
+        [Display(Name = "E-post")]
         public string Email { get; set; }
 
         [Required]
