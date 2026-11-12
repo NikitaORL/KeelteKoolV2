@@ -13,6 +13,10 @@ namespace KeelteKoolV2.xUnitTesting
 {
     public class StudentTests : TestBase
     {
+
+        /// <summary>
+        /// Kontrollib, kas uue õpilase lisamine andmebaasi õnnestub ja kõik sisestatud andmed salvestatakse korrektselt.
+        /// </summary>
         [Fact]
         public async Task Should_Add_Student()
         {
@@ -39,6 +43,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("nikita.fortnite@test.ee", dbItem.Email);
         }
 
+        /// <summary>
+        /// Kontrollib, kas olemasoleva õpilase andmete pärimine ID alusel tagastab õige kirje.
+        /// </summary>
         [Fact]
         public async Task Should_Get_Student()
         {
@@ -60,6 +67,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("mark.madk1d@test.ee", fetched.Email);
         }
 
+        /// <summary>
+        /// Kontrollib, kas olemasoleva õpilase andmete muutmine uuendab kirjet andmebaasis korrektselt.
+        /// </summary>
         [Fact]
         public async Task Should_Update_Student()
         {
@@ -85,6 +95,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotEqual("liis@test.ee", dbItem.Email);
         }
 
+        /// <summary>
+        /// Kontrollib, kas olemasoleva õpilase kustutamine eemaldab kirje andmebaasist ja tagastab kustutatud objekti.
+        /// </summary>
         [Fact]
         public async Task Should_Delete_Student()
         {
@@ -107,6 +120,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Equal("Kalle", deleted.FirstName);
         }
 
+        /// <summary>
+        /// Kontrollib, kas olemasoleva õpilase kustutamine eemaldab kirje andmebaasist ja tagastab kustutatud objekti.
+        /// </summary>
         [Fact]
         public async Task Should_Get_All_Students()
         {
@@ -127,6 +143,9 @@ namespace KeelteKoolV2.xUnitTesting
 
         //Negatiivsed
 
+        /// <summary>
+        /// Negatiivne test: kontrollib, et olematu ID-ga õpilase otsimisel tagastatakse null ega teki viga.
+        /// </summary>
         [Fact]
         public async Task Should_Not_Get_Missing_Student()
         {
@@ -140,6 +159,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.DoesNotContain(allStudents, s => s.Id == nonExistentId);
         }
 
+        /// <summary>
+        /// Negatiivne test: kontrollib, et olematu ID-ga õpilase kustutamisel tagastatakse null ja andmebaasi kirjete arv ei muutu.
+        /// </summary>
         [Fact]
         public async Task Should_Not_Delete_Missing_Student()
         {
@@ -157,6 +179,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Null(checkItem);
         }
 
+        /// <summary>
+        /// Kontrollib õpilase täielikku elutsüklit (loomine, uuendamine, kustutamine ja kustutamise järelkontroll).
+        /// </summary>
         [Fact]
         public async Task Should_Run_Full_Student_Cycle()
         {
@@ -176,6 +201,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.Null(finalCheck);
         }
 
+        /// <summary>
+        /// Negatiivne test: kontrollib, et tühja (null) DTO edastamisel viskab teenus ArgumentNullException erindi.
+        /// </summary>
         [Fact]
         public async Task Should_Throw_On_Null_Dto()
         {
@@ -189,6 +217,9 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.DoesNotContain(students, s => s == null);
         }
 
+        /// <summary>
+        /// Kontrollib, kas mitme õpilase järjestikune lisamine suurendab andmebaasis olevate kirjete arvu täpselt lisatud kirjete võrra.
+        /// </summary>
         [Fact]
         public async Task Should_Add_Multiple_Students()
         {
