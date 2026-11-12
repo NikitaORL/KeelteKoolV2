@@ -15,7 +15,7 @@ namespace KeelteKoolV2.xUnitTesting
     {
 
         /// <summary>
-        /// Kontrollib, kas uue õpilase lisamine andmebaasi õnnestub ja kõik sisestatud andmed salvestatakse korrektselt.
+        /// Kontrollib, kas uue õpilase lisamine andmebaasi õnnestub ja kõik sisestatud andmed salvestatakse korrektselt
         /// </summary>
         [Fact]
         public async Task Should_Add_Student()
