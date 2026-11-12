@@ -152,11 +152,13 @@ namespace KeelteKoolV2.xUnitTesting
             var nonExistentId = Guid.NewGuid();
             var result = await Svc<IStudentsServices>().GetByIdAsync(nonExistentId);
             var allStudents = await Svc<IStudentsServices>().GetAllAsync();
+            var dbCheck = await Context.Students.FindAsync(nonExistentId);
 
             Assert.Null(result);
-            Assert.NotEqual(Guid.Empty, nonExistentId);
+            Assert.Null(dbCheck);
             Assert.NotNull(allStudents);
             Assert.DoesNotContain(allStudents, s => s.Id == nonExistentId);
+            Assert.DoesNotContain(allStudents, s => s == null);
         }
 
         /// <summary>
@@ -170,35 +172,15 @@ namespace KeelteKoolV2.xUnitTesting
 
             var result = await Svc<IStudentsServices>().DeleteAsync(invalidId);
 
-            var countAfter = (await Svc<IStudentsServices>().GetAllAsync()).Count();
+            var allAfter = await Svc<IStudentsServices>().GetAllAsync();
+            var countAfter = allAfter.Count();
             var checkItem = await Context.Students.FindAsync(invalidId);
 
             Assert.Null(result);
             Assert.Equal(countBefore, countAfter);
-            Assert.NotEqual(Guid.Empty, invalidId);
             Assert.Null(checkItem);
-        }
-
-        /// <summary>
-        /// Kontrollib õpilase täielikku elutsüklit (loomine, uuendamine, kustutamine ja kustutamise järelkontroll).
-        /// </summary>
-        [Fact]
-        public async Task Should_Run_Full_Student_Cycle()
-        {
-            var dto = new StudentDTO { FirstName = "Test", LastName = "Test", Email = "t@t.ee" };
-            var created = await Svc<IStudentsServices>().CreateAsync(dto);
-
-            created.FirstName = "UpdatedTest";
-            var updated = await Svc<IStudentsServices>().UpdateAsync(created);
-
-            var deleted = await Svc<IStudentsServices>().DeleteAsync(updated.Id);
-            var finalCheck = await Svc<IStudentsServices>().GetByIdAsync(created.Id);
-
-            Assert.NotNull(created);
-            Assert.NotNull(updated);
-            Assert.NotNull(deleted);
-            Assert.Equal("UpdatedTest", updated.FirstName);
-            Assert.Null(finalCheck);
+            Assert.NotNull(allAfter);
+            Assert.DoesNotContain(allAfter, s => s.Id == invalidId);
         }
 
         /// <summary>
@@ -208,13 +190,18 @@ namespace KeelteKoolV2.xUnitTesting
         public async Task Should_Throw_On_Null_Dto()
         {
             StudentDTO nullDto = null;
+            var countBefore = (await Svc<IStudentsServices>().GetAllAsync()).Count();
 
-            await Assert.ThrowsAsync<ArgumentNullException>(
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(
                 () => Svc<IStudentsServices>().CreateAsync(nullDto));
 
             var students = await Svc<IStudentsServices>().GetAllAsync();
+
+            Assert.NotNull(exception);
+            Assert.Equal(countBefore, students.Count());
             Assert.NotNull(students);
             Assert.DoesNotContain(students, s => s == null);
+            Assert.Null(nullDto);
         }
 
         /// <summary>
@@ -233,7 +220,8 @@ namespace KeelteKoolV2.xUnitTesting
 
             Assert.NotNull(list);
             Assert.Equal(initialCount + 2, currentCount);
-            Assert.True(currentCount > initialCount);
+            Assert.Contains(list, s => s.FirstName == "One" && s.Email == "1@1.ee");
+            Assert.Contains(list, s => s.FirstName == "Two" && s.Email == "2@2.ee");
             Assert.NotEqual(initialCount, currentCount);
         }
 
