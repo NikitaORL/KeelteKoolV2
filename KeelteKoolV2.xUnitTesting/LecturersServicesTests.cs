@@ -284,5 +284,31 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotNull(result);
             Assert.Equal("Ekspert", result.Qualifications);
         }
+
+
+
+
+
+
+        // Lisatest 5: Kontrollin, kas uus õppejõud on nimekirjas
+        [Fact]
+        public async Task Should_FindCreatedLecturer_InLecturersList()
+        {
+            // ülesseade
+            LecturerDTO dto = new LecturerDTO
+            {
+                FirstName = "Test",
+                LastName = "Test",
+                Qualifications = "Test"
+            };
+
+            // tegevus
+            var created = await Svc<ILecturersServices>().Create(dto);
+            var result = await Svc<ILecturersServices>().GetAllAsync();
+
+            // kontroll
+            Assert.NotNull(result);
+            Assert.Contains(result, x => x.Id == created.Id);
+        }
     }
 }
