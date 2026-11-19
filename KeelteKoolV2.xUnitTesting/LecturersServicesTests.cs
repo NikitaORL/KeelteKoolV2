@@ -233,5 +233,30 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.NotNull(result);
             Assert.Equal("Doe", result.LastName);
         }
+
+
+
+
+        // Lisatest 3: Kontrollin, kas kustutatud õppejõud on andmebaasist kadunud
+        [Fact]
+        public async Task Should_ReturnNull_AfterDeletingLecturer()
+        {
+            // ülesseade
+            LecturerDTO dto = new LecturerDTO
+            {
+                FirstName = "Test",
+                LastName = "Test",
+                Qualifications = "Test"
+            };
+
+            var created = await Svc<ILecturersServices>().Create(dto);
+
+            // tegevus
+            await Svc<ILecturersServices>().Delete(created.Id);
+            var result = await Svc<ILecturersServices>().DetailAsync(created.Id);
+
+            // kontroll
+            Assert.Null(result);
+        }
     }
 }
