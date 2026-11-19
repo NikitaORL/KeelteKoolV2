@@ -212,5 +212,26 @@ namespace KeelteKoolV2.xUnitTesting
             // kontroll
             Assert.Null(result);
         }
+
+        // Lisatest 2: Kontrollin, kas tühi perekonnanimi asendatakse nimega Doe
+        [Fact]
+        public async Task Should_AssignDefaultLastName_WhenLastNameIsEmpty()
+        {
+            // ülesseade
+            LecturerDTO dto = new LecturerDTO
+            {
+                FirstName = "Test",
+                LastName = "",
+                Qualifications = "Test"
+            };
+
+            // tegevus
+            var created = await Svc<ILecturersServices>().Create(dto);
+            var result = await Svc<ILecturersServices>().DetailAsync(created.Id);
+
+            // kontroll
+            Assert.NotNull(result);
+            Assert.Equal("Doe", result.LastName);
+        }
     }
 }
