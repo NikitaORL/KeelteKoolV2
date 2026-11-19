@@ -197,6 +197,20 @@ namespace KeelteKoolV2.xUnitTesting
 
 
         ////////////////////////////////////////Lisatestid//////////////////////////////////////////////////////////
-        ///
+
+
+        // Lisatest 1: Kontrollin, kas null andmetega õppejõudu saab lisada
+        [Fact]
+        public async Task Should_ReturnNull_WhenCreatingNullLecturer()
+        {
+            // ülesseade
+            LecturerDTO dto = null;
+
+            // tegevus
+            var result = await Svc<ILecturersServices>().Create(dto);
+
+            // kontroll
+            Assert.Null(result);
+        }
     }
 }
