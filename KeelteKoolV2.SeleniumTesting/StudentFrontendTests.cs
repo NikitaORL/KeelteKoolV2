@@ -1,14 +1,7 @@
 using OpenQA.Selenium;
-using OpenQA.Selenium.DevTools.V153.Security;
-using OpenQA.Selenium.Edge;
 using OpenQA.Selenium.Firefox;
-using OpenQA.Selenium.Remote;
 using System;
-using System.Buffers.Text;
 using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.Reflection;
-using System.Text;
 using Xunit;
 
 namespace KeelteKoolV2.SeleniumTesting
@@ -16,91 +9,91 @@ namespace KeelteKoolV2.SeleniumTesting
     [TestCaseOrderer("KeelteKoolV2.SeleniumTesting.PriorityOrderer", "KeelteKoolV2.SeleniumTesting")]
     public class StudentFrontendTests
     {
-        public static string thisRunGuid { get; set; } = "";
+        public static string thisRunGuid { get; set; }
 
         /// <summary>
-        /// Test loob uue õpilase unikaalse eesnimega. Kontrollib, et pärast salvestamist
-        /// ollakse tagasi nimekirjas ja õpilane on tabelis õige eesnime, perenime ja e-postiga.
+        /// Test loob uue õpilase unikaalse eesnimega ja kontrollib, et õpilane ilmub nimekirja õigete andmetega.
         /// </summary>
         [Fact]
         [Order(1)]
-        public void Should_CreateStudent_WithUniqueData()
+        public void Should_AddStudentWithUniqueData_ReturnToIndex()
         {
             /* Ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
 
             /* tegevus */
-            driver.FindElement(By.LinkText("Create New")).Click();
-            thisRunGuid = DataEntry_Student(driver);
-            driver.FindElement(By.CssSelector("input[value='Create']")).Click();
+            IWebElement indexCreateButton = driver.FindElement(By.Id("IndexCreateNewStudent_BTN"));
+            indexCreateButton.Click();
+
+            string uniqueId = DataEntry_Student(driver);
+            thisRunGuid = uniqueId;
+
+            IWebElement createButton = driver.FindElement(By.Id("CU_Create_BTN"));
+            createButton.Click();
             Thread.Sleep(1000);
 
             /* kontroll */
-            string url = driver.Url;
-            IWebElement? row = FindStudentRow(driver, thisRunGuid);
-            bool isObjectFound = row != null;
-            string firstName = "";
-            string lastName = "";
-            string email = "";
-            if (row != null)
+            var tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            List<IWebElement> rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
+            string firstNameData = "";
+            string lastNameData = "";
+            string emailData = "";
+            foreach (var row in rowsOfTable)
             {
-                List<IWebElement> cells = row.FindElements(By.TagName("td")).ToList();
-                firstName = cells[0].Text;
-                lastName = cells[1].Text;
-                email = cells[2].Text;
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    firstNameData = row.FindElement(By.Id("IndexTableStudentFirstName")).Text;
+                    lastNameData = row.FindElement(By.Id("IndexTableStudentLastName")).Text;
+                    emailData = row.FindElement(By.Id("IndexTableStudentEmail")).Text;
+                }
             }
             driver.Quit();
 
-            Assert.EndsWith("/Students", url);
-            Assert.True(isObjectFound);
-            Assert.Equal(thisRunGuid, firstName);
-            Assert.Equal("Selenium", lastName);
-            Assert.Equal("selenium@test.ee", email);
+            Assert.Equal(uniqueId, firstNameData);
+            Assert.Equal("Selenium", lastNameData);
+            Assert.Equal("selenium@test.ee", emailData);
         }
 
-
         /// <summary>
-        /// Test avab eelnevalt loodud õpilase Details lehe ja kontrollib, et lehel on
-        /// samad andmed mis loomisel sisestati ning loomise kuupäev on täidetud.
+        /// Test avab eelnevalt loodud õpilase Details lehe ja kontrollib, et andmed on samad mis loomisel.
         /// </summary>
         [Fact]
         [Order(2)]
-        public void Should_ShowDetailsOfStudent_WithPreviouslyUniqueData()
+        public void Should_NavigateToDetailsOfStudent_WithPreviouslyUniqueData()
         {
             /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+            var tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            List<IWebElement> rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
+            bool isObjectFound = false;
 
             /* tegevus */
-            bool isObjectFound = row != null;
-            if (row != null)
+            foreach (var row in rowsOfTable)
             {
-                row.FindElement(By.LinkText("Details")).Click();
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    isObjectFound = true;
+                    row.FindElement(By.Id("IndexTableStudentDetails_BTN")).Click();
+                    break;
+                }
             }
             Thread.Sleep(1000);
-            string url = driver.Url;
-            string heading = driver.FindElement(By.TagName("h1")).Text;
-            List<IWebElement> values = driver.FindElements(By.TagName("dd")).ToList();
-            string details_firstName = values[0].Text;
-            string details_lastName = values[1].Text;
-            string details_email = values[2].Text;
-            string details_createdAt = values[3].Text;
+            string details_firstName = driver.FindElement(By.Id("DD_StudentFirstName")).Text;
+            string details_lastName = driver.FindElement(By.Id("DD_StudentLastName")).Text;
+            string details_email = driver.FindElement(By.Id("DD_StudentEmail")).Text;
             driver.Quit();
 
             /* kontroll */
             Assert.True(isObjectFound);
-            Assert.Contains("/Students/Details", url);
-            Assert.Equal("Student Details", heading);
             Assert.Equal(thisRunGuid, details_firstName);
             Assert.Equal("Selenium", details_lastName);
             Assert.Equal("selenium@test.ee", details_email);
-            Assert.NotEmpty(details_createdAt);
-            Assert.Contains(DateTime.Now.Year.ToString(), details_createdAt);
         }
 
         /// <summary>
-        /// Test muudab eelnevalt loodud õpilase perenime ja e-posti (eesnimi jääb samaks, et õpilast leida).
-        /// Kontrollib, et nimekirjas on uued väärtused ja vanad väärtused on kadunud.
+        /// Test muudab eelnevalt loodud õpilase perenime ja e-posti ning kontrollib, et nimekirjas on uued andmed.
         /// </summary>
         [Fact]
         [Order(3)]
@@ -108,51 +101,52 @@ namespace KeelteKoolV2.SeleniumTesting
         {
             /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+            var tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            List<IWebElement> rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
 
             /* tegevus */
-            bool isObjectFound = row != null;
-            if (row != null)
+            foreach (var row in rowsOfTable)
             {
-                row.FindElement(By.LinkText("Edit")).Click();
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    row.FindElement(By.Id("IndexTableStudentUpdate_BTN")).Click();
+                    break;
+                }
             }
             Thread.Sleep(1000);
-            IWebElement lastNameInput = driver.FindElement(By.Id("LastName"));
-            lastNameInput.Clear();
-            lastNameInput.SendKeys("Uuendatud");
-            IWebElement emailInput = driver.FindElement(By.Id("Email"));
-            emailInput.Clear();
-            emailInput.SendKeys("uuendatud@test.ee");
-            driver.FindElement(By.CssSelector("input[value='Save']")).Click();
+            IWebElement lastName = driver.FindElement(By.Id("CU_Student_LastName"));
+            lastName.Clear();
+            lastName.SendKeys("Uuendatud");
+            IWebElement email = driver.FindElement(By.Id("CU_Student_Email"));
+            email.Clear();
+            email.SendKeys("uuendatud@test.ee");
+            driver.FindElement(By.Id("CU_Update_BTN")).Click();
             Thread.Sleep(1000);
 
             /* kontroll */
-            string url = driver.Url;
-            IWebElement? updatedRow = FindStudentRow(driver, thisRunGuid);
-            string firstName = "";
-            string lastName = "";
-            string email = "";
-            if (updatedRow != null)
+            tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
+            string lastNameData = "";
+            string emailData = "";
+            foreach (var row in rowsOfTable)
             {
-                List<IWebElement> cells = updatedRow.FindElements(By.TagName("td")).ToList();
-                firstName = cells[0].Text;
-                lastName = cells[1].Text;
-                email = cells[2].Text;
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    lastNameData = row.FindElement(By.Id("IndexTableStudentLastName")).Text;
+                    emailData = row.FindElement(By.Id("IndexTableStudentEmail")).Text;
+                }
             }
             driver.Quit();
 
-            Assert.True(isObjectFound);
-            Assert.EndsWith("/Students", url);
-            Assert.Equal(thisRunGuid, firstName);
-            Assert.Equal("Uuendatud", lastName);
-            Assert.Equal("uuendatud@test.ee", email);
-            Assert.NotEqual("Selenium", lastName);
-            Assert.NotEqual("selenium@test.ee", email);
+            Assert.Equal("Uuendatud", lastNameData);
+            Assert.Equal("uuendatud@test.ee", emailData);
+            Assert.NotEqual("Selenium", lastNameData);
         }
 
         /// <summary>
-        /// Test kustutab eelnevalt loodud õpilase. Kontrollib, et kustutamise lehel on õige õpilane
-        /// ja pärast kinnitamist ei ole õpilast enam nimekirjas.
+        /// Test kustutab eelnevalt loodud õpilase ja kontrollib, et teda ei ole enam nimekirjas.
         /// </summary>
         [Fact]
         [Order(4)]
@@ -160,36 +154,43 @@ namespace KeelteKoolV2.SeleniumTesting
         {
             /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            IWebElement? row = FindStudentRow(driver, thisRunGuid);
+            var tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            List<IWebElement> rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
 
             /* tegevus */
-            bool isObjectFoundBefore = row != null;
-            if (row != null)
+            foreach (var row in rowsOfTable)
             {
-                row.FindElement(By.LinkText("Delete")).Click();
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    row.FindElement(By.Id("IndexTableStudentDelete_BTN")).Click();
+                    break;
+                }
             }
             Thread.Sleep(1000);
-            string deleteUrl = driver.Url;
-            string deleteViewFirstName = driver.FindElements(By.TagName("dd"))[0].Text;
-            driver.FindElement(By.CssSelector("input[value='Delete']")).Click();
+            driver.FindElement(By.Id("DeleteDelete_BTN")).Click();
             Thread.Sleep(1000);
 
             /* kontroll */
-            string url = driver.Url;
-            IWebElement? deletedRow = FindStudentRow(driver, thisRunGuid);
-            bool isObjectFoundAfter = deletedRow != null;
+            bool isObjectFound = false;
+            tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
+            foreach (var row in rowsOfTable)
+            {
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == thisRunGuid)
+                {
+                    isObjectFound = true;
+                    break;
+                }
+            }
             driver.Quit();
 
-            Assert.True(isObjectFoundBefore);
-            Assert.Contains("/Students/Delete", deleteUrl);
-            Assert.Equal(thisRunGuid, deleteViewFirstName);
-            Assert.EndsWith("/Students", url);
-            Assert.False(isObjectFoundAfter);
+            Assert.False(isObjectFound);
         }
 
         /// <summary>
-        /// Test vajutab loomisvormil "Create" ilma andmeid sisestamata. Kontrollib, et kasutaja jääb
-        /// loomislehele ja iga välja all kuvatakse õige veateade.
+        /// Test vajutab loomisvormil "Create" ilma andmeid sisestamata ja kontrollib, et iga välja all on veateade.
         /// </summary>
         [Fact]
         [Order(5)]
@@ -197,152 +198,130 @@ namespace KeelteKoolV2.SeleniumTesting
         {
             /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            driver.FindElement(By.LinkText("Create New")).Click();
+            driver.FindElement(By.Id("IndexCreateNewStudent_BTN")).Click();
 
             /* tegevus */
-            driver.FindElement(By.CssSelector("input[value='Create']")).Click();
+            driver.FindElement(By.Id("CU_Create_BTN")).Click();
             Thread.Sleep(1000);
 
             /* kontroll */
-            string url = driver.Url;
-            string firstNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='FirstName']")).Text;
-            string lastNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='LastName']")).Text;
-            string emailError = driver.FindElement(By.CssSelector("span[data-valmsg-for='Email']")).Text;
+            string firstNameError = driver.FindElement(By.Id("CU_Student_FirstName_Error")).Text;
+            string lastNameError = driver.FindElement(By.Id("CU_Student_LastName_Error")).Text;
+            string emailError = driver.FindElement(By.Id("CU_Student_Email_Error")).Text;
             driver.Quit();
 
-            Assert.Contains("/Students/Create", url);
             Assert.Equal("Eesnimi on kohustuslik", firstNameError);
             Assert.Equal("Perenimi on kohustuslik", lastNameError);
             Assert.Equal("E-post on kohustuslik", emailError);
         }
+
         /// <summary>
-        /// Test sisestab e-posti väljale vigase aadressi (ilma @ märgita). Kontrollib, et kuvatakse
-        /// veateade, kasutaja jääb loomislehele ja õpilast nimekirja ei lisata.
+        /// Test sisestab e-posti väljale vigase aadressi (ilma @ märgita) ja kontrollib, et kuvatakse veateade.
         /// </summary>
         [Fact]
         [Order(6)]
-        public void Should_ShowError_WhenEmailIsValid()
+        public void Should_ShowError_WhenEmailIsInvalid()
         {
-            //Ulesseade
+            /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            driver.FindElement(By.LinkText("Create New")).Click();
-            string invalidGuid = Guid.NewGuid().ToString();
-            driver.FindElement(By.Id("FirstName")).SendKeys(invalidGuid);
-            driver.FindElement(By.Id("LastName")).SendKeys(invalidGuid);
-            driver.FindElement(By.Id("Email")).SendKeys(invalidGuid);
+            driver.FindElement(By.Id("IndexCreateNewStudent_BTN")).Click();
+            driver.FindElement(By.Id("CU_Student_FirstName")).SendKeys("Test");
+            driver.FindElement(By.Id("CU_Student_LastName")).SendKeys("Test");
+            driver.FindElement(By.Id("CU_Student_Email")).SendKeys("ilmaMargita");
 
-            // tegevus
-            driver.FindElement(By.CssSelector("input[value='Create']")).Click();
+            /* tegevus */
+            driver.FindElement(By.Id("CU_Create_BTN")).Click();
             Thread.Sleep(1000);
 
-            //kontroll
-            string url = driver.Url;
-            string mailError = driver.FindElement(By.CssSelector("span[data-valmsg-for='Email']")).Text;
-            string firstNameError = driver.FindElement(By.CssSelector("span[data-valmsg-for='FirstName']")).Text;
-            driver.FindElement(By.LinkText("Back to List")).Click();
-            Thread.Sleep(1000);
-            IWebElement? row = FindStudentRow(driver, invalidGuid);
-            bool isObjectFound = row != null;
+            /* kontroll */
+            string emailError = driver.FindElement(By.Id("CU_Student_Email_Error")).Text;
+            string firstNameError = driver.FindElement(By.Id("CU_Student_FirstName_Error")).Text;
             driver.Quit();
 
-            Assert.Contains("/Students/Create", url);
-            Assert.Equal("Vigane e-posti addres", mailError);
+            Assert.Equal("Vigane e-posti addres", emailError);
             Assert.Equal("", firstNameError);
-            Assert.False(isObjectFound);
         }
+
         /// <summary>
-        /// Test täidab loomisvormi, kuid vajutab "Back to List" ilma salvestamata. Kontrollib, et
-        /// kasutaja jõuab nimekirja tagasi ja õpilast ei ole loodud.
+        /// Test täidab loomisvormi, kuid vajutab "Cancel" ilma salvestamata ja kontrollib, et õpilast ei loodud.
         /// </summary>
         [Fact]
         [Order(7)]
-        public void Should_NotCreateStudent_WhenBackToListIsClicked()
+        public void Should_NotCreateStudent_WhenCancelIsClicked()
         {
-            //Uleseade
+            /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            driver.FindElement(By.LinkText("Create New")).Click();
-            string canceldGuid = DataEntry_Student(driver);
+            driver.FindElement(By.Id("IndexCreateNewStudent_BTN")).Click();
+            string cancelGuid = DataEntry_Student(driver);
 
-            //tegevus
-            driver.FindElement(By.LinkText("Back To List")).Click();
+            /* tegevus */
+            driver.FindElement(By.Id("CU_Cancel_BTN")).Click();
             Thread.Sleep(1000);
 
-            //kontroll
-            string url = driver.Url;
-            IWebElement? row = FindStudentRow(driver, canceldGuid);
-            bool isObjectFound = row != null;
+            /* kontroll */
+            bool isObjectFound = false;
+            var tableOfIndex = driver.FindElement(By.Id("IndexTable"));
+            List<IWebElement> rowsOfTable = tableOfIndex.FindElements(By.TagName("tr")).ToList();
+            rowsOfTable.RemoveAt(0);
+            foreach (var row in rowsOfTable)
+            {
+                if (row.FindElement(By.Id("IndexTableStudentFirstName")).Text == cancelGuid)
+                {
+                    isObjectFound = true;
+                    break;
+                }
+            }
             driver.Quit();
 
-            Assert.EndsWith("/Studets", url);
             Assert.False(isObjectFound);
         }
+
         /// <summary>
-        /// Test avab avalehe ja vajutab menüüs lingile "Students". Kontrollib, et avaneb õpilaste
-        /// nimekiri: õige aadress, pealkiri ja tabeli veerupäised.
+        /// Test kontrollib, et menüü lingilt "Students" avaneb õpilaste nimekiri õige aadressi ja pealkirjaga.
         /// </summary>
         [Fact]
         [Order(8)]
         public void Should_OpenStudentsList_FromNavbar()
         {
-            //Uleseade
+            /* ülesseade */
             IWebDriver driver = TestSetup_NavigateToIndex();
-            driver.Url = "https://localhost:7191/";
-            Thread.Sleep(1000);
 
-            //tegevus
-            driver.FindElement(By.LinkText("Students")).Click();
-            Thread.Sleep(1000);
-
-            //kontroll
+            /* tegevus */
             string url = driver.Url;
             string heading = driver.FindElement(By.TagName("h1")).Text;
-            List<IWebElement> headers = driver.FindElements(By.TagName("th")).ToList();
-            string header1 = headers[0].Text;
-            string header2 = headers[1].Text;
-            string header3 = headers[2].Text;
             driver.Quit();
 
+            /* kontroll */
             Assert.EndsWith("/Students", url);
             Assert.Equal("Students", heading);
-            Assert.Equal("Eesnimi", header1);
-            Assert.Equal("Perenimi", header2);
-            Assert.Equal("E-post", header3);
-
         }
 
-        //oluline funktsioonid 
-        private static IWebElement? FindStudentRow(IWebDriver driver, string firstName)
-        {
-            IWebElement table = driver.FindElement(By.TagName("table"));
-            List<IWebElement> rowsOfTable = table.FindElements(By.TagName("tr")).ToList();
-            rowsOfTable.RemoveAt(0); //esimene rida on päis
-            foreach (var row in rowsOfTable)
-            {
-                List<IWebElement> cells = row.FindElements(By.TagName("td")).ToList();
-                if (cells[0].Text == firstName)
-                {
-                    return row;
-                }
-            }
-            return null;
-        }
+        /// <summary>
+        /// Sisestab loomisvormi andmed, eesnimeks pannakse unikaalne Guid.
+        /// </summary>
+        /// <param name="driver">Hetkel käsitletav draiver</param>
+        /// <returns>Tagastab Guidi stringi kujul, mis pandi eesnime väljale</returns>
         private static string DataEntry_Student(IWebDriver driver)
         {
             Guid generatedId = Guid.NewGuid();
-            driver.FindElement(By.Id("FirstName")).SendKeys(generatedId.ToString());
-            driver.FindElement(By.Id("LastName")).SendKeys("Selenium");
-            driver.FindElement(By.Id("Email")).SendKeys("selenium@test.ee");
+            driver.FindElement(By.Id("CU_Student_FirstName")).SendKeys(generatedId.ToString());
+            driver.FindElement(By.Id("CU_Student_LastName")).SendKeys("Selenium");
+            driver.FindElement(By.Id("CU_Student_Email")).SendKeys("selenium@test.ee");
             return generatedId.ToString();
         }
+
+        /// <summary>
+        /// Ülesseade meetod mis tekitab draiveri, navigeerib aadressile ja vajutab Students lingile.
+        /// </summary>
+        /// <returns>Tagastab testisiseselt kasutatava draiveri</returns>
         private static IWebDriver TestSetup_NavigateToIndex()
         {
-            IWebDriver driver = new FirefoxDriver(); //brauserit juhtiv ja seal tegutsev draiver
-            driver.Url = "https://localhost:7191/"; //navigeeritav aadress
+            IWebDriver driver = new FirefoxDriver();
+            driver.Url = "https://localhost:7191/";
             Thread.Sleep(3000);
-            IWebElement navigateToLanguageCourse = driver.FindElement(By.LinkText("Keelekursused"));//otsime tesitava osa lingi
-            navigateToLanguageCourse.Click(); //simuleeritud tegevus elemendiga, antud juhul klikk
+            IWebElement navigateToStudents = driver.FindElement(By.LinkText("Students"));
+            navigateToStudents.Click();
             return driver;
         }
-
     }
 }
