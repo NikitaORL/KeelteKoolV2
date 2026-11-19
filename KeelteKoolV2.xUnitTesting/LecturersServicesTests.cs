@@ -188,5 +188,15 @@ namespace KeelteKoolV2.xUnitTesting
             Assert.IsType<Guid>(result.Id);
             Assert.Equal(36, result.Id.ToString().Length);
         }
+
+
+
+
+
+
+
+
+        ////////////////////////////////////////Lisatestid//////////////////////////////////////////////////////////
+        ///
     }
 }
