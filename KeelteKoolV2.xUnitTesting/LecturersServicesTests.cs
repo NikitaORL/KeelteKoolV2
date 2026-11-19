@@ -258,5 +258,31 @@ namespace KeelteKoolV2.xUnitTesting
             // kontroll
             Assert.Null(result);
         }
+
+        // Lisatest 4: Kontrollin, kas uus kvalifikatsioon salvestub
+        [Fact]
+        public async Task Should_SaveNewQualifications_WhenUpdatingLecturer()
+        {
+            // ülesseade
+            LecturerDTO dto = new LecturerDTO
+            {
+                FirstName = "Test",
+                LastName = "Test",
+                Qualifications = "Algaja"
+            };
+
+            var created = await Svc<ILecturersServices>().Create(dto);
+
+            dto.Id = created.Id;
+            dto.Qualifications = "Ekspert";
+
+            // tegevus
+            await Svc<ILecturersServices>().Update(dto);
+            var result = await Svc<ILecturersServices>().DetailAsync(created.Id);
+
+            // kontroll
+            Assert.NotNull(result);
+            Assert.Equal("Ekspert", result.Qualifications);
+        }
     }
 }
