@@ -15,6 +15,8 @@ namespace KeelteKoolV2
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             //services
             builder.Services.AddScoped<IEmailingServices, EmailingServices>();
@@ -46,6 +48,11 @@ namespace KeelteKoolV2
 
 
             var app = builder.Build();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.RoutePrefix = "docs";
+            });
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
