@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "KeelteKoolV2.ApplicationServices": {
+      "commandName": "Project"
+    },
+    "Profile 1": {
+      "commandName": "Project"
+    }
+  }
+}
