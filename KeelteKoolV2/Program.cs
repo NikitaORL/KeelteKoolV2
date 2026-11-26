@@ -13,7 +13,6 @@ namespace KeelteKoolV2
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             //services
@@ -24,10 +23,9 @@ namespace KeelteKoolV2
             builder.Services.AddScoped<IStudentsServices, StudentsService>();
 
             //swagger
-            builder.Services.AddSwaggerGen();
             builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
-            //apiclients
             //dbcontext
             builder.Services.AddDbContext<KeelteKoolV2Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -46,29 +44,107 @@ namespace KeelteKoolV2
                 .AddDefaultTokenProviders()
                 .AddTokenProvider<DataProtectorTokenProvider<ApplicationUser>>("CustomEmailConfirmation");
 
-            //auth
-
-
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<KeelteKoolV2Context>();
+                db.Database.Migrate();
+
+                if (!db.Students.Any())
+                {
+                    db.Students.AddRange(
+                        new Student
+                        {
+                            Id = Guid.NewGuid(),
+                            FirstName = "Mari",
+                            LastName = "Maasikas",
+                            Email = "mari.maasikas@tthk.ee",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        },
+                        new Student
+                        {
+                            Id = Guid.NewGuid(),
+                            FirstName = "Jaan",
+                            LastName = "Tamm",
+                            Email = "jaan.tamm@tthk.ee",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        }
+                    );
+                }
+
+                if (!db.Lecturers.Any())
+                {
+                    db.Lecturers.AddRange(
+                        new Lecturer
+                        {
+                            Id = Guid.NewGuid(),
+                            FirstName = "Kati",
+                            LastName = "Kask",
+                            Qualifications = "Magistrikraad, C2 tase",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        },
+                        new Lecturer
+                        {
+                            Id = Guid.NewGuid(),
+                            FirstName = "Peeter",
+                            LastName = "Põld",
+                            Qualifications = "Bakalaureus, B2 tase",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        }
+                    );
+                }
+
+                if (!db.LanguageCourses.Any())
+                {
+                    db.LanguageCourses.AddRange(
+                        new LanguageCourse
+                        {
+                            Id = Guid.NewGuid(),
+                            Nimetus = "Eesti keel algajatele",
+                            Keel = "Eesti",
+                            Tase = "A2",
+                            Kirjeldus = "Põhikursus igapäevaseks suhtluseks.",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        },
+                        new LanguageCourse
+                        {
+                            Id = Guid.NewGuid(),
+                            Nimetus = "Inglise ärikeel",
+                            Keel = "Inglise",
+                            Tase = "B2",
+                            Kirjeldus = "Ärisuhtlus ja kirjavahetus.",
+                            CreatedAt = DateTime.Now,
+                            ModifiedAt = DateTime.Now
+                        }
+                    );
+                }
+
+                db.SaveChanges();
+            }
+
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
-
-                app.UseSwagger();
-                app.UseSwaggerUI(options =>
-                {
-                    options.SwaggerEndpoint("/swagger/1/swagger.json", "v1");
-                    options.RoutePrefix = "docs";
-                });
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+                options.RoutePrefix = "docs";
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapStaticAssets();
