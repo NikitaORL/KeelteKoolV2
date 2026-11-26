@@ -32,6 +32,7 @@ namespace KeelteKoolV2.xUnitTesting
             services.AddScoped<ILecturersServices, LecturersServices>();
             services.AddScoped<IFilesServices, FilesServices>();
             services.AddScoped<IHostEnvironment, MockIHostEnvironment>();
+            services.AddScoped<IStudentsServices, StudentsService>();
 
             services.AddDbContext<KeelteKoolV2Context>
                 (x =>
@@ -63,7 +64,9 @@ namespace KeelteKoolV2.xUnitTesting
 
         protected T Svc<T>() 
         {
-            return serviceProvider.GetService<T>();
+            return serviceProvider.GetRequiredService<T>();
         }
+
+        protected KeelteKoolV2Context Context => Svc<KeelteKoolV2Context>();
     }
 }
