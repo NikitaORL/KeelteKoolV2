@@ -22,8 +22,12 @@ namespace KeelteKoolV2
             builder.Services.AddScoped<IFilesServices, FilesServices>();
             builder.Services.AddScoped<ILecturersServices, LecturersServices>();
             builder.Services.AddScoped<IStudentsServices, StudentsService>();
-            //apiclients
 
+            //swagger
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddEndpointsApiExplorer();
+
+            //apiclients
             //dbcontext
             builder.Services.AddDbContext<KeelteKoolV2Context>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -53,6 +57,13 @@ namespace KeelteKoolV2
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
+
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    options.SwaggerEndpoint("/swagger/1/swagger.json", "v1");
+                    options.RoutePrefix = "docs";
+                });
             }
 
             app.UseHttpsRedirection();
