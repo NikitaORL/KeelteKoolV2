@@ -1,0 +1,23 @@
+﻿@model KeelteKoolV2.Core.DTO.LecturerDTO
+
+<h1>Muuda õppejõudu</h1>
+
+<form method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label asp-for="FirstName">Eesnimi</label>
+        <input asp-for="FirstName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="LastName">Perekonnanimi</label>
+        <input asp-for="LastName" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="Qualifications">Kvalifikatsioon</label>
+        <input asp-for="Qualifications" class="form-control" />
+    </div>
+    
+    <button type="submit" class="btn btn-primary mt-2">Salvesta muudatused</button>
+    <a asp-action="Index" class="btn btn-secondary mt-2">Tagasi</a>
+</form>
