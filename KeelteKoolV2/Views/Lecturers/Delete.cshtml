@@ -1,0 +1,25 @@
+﻿@model KeelteKoolV2.Core.DTO.LecturerDTO
+
+<h1>Kustuta õppejõud</h1>
+
+<h3>Kas oled kindel, et soovid selle õppejõu kustutada?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Eesnimi</dt>
+        <dd class="col-sm-10">@Model.FirstName</dd>
+        
+        <dt class="col-sm-2">Perekonnanimi</dt>
+        <dd class="col-sm-10">@Model.LastName</dd>
+        
+        <dt class="col-sm-2">Kvalifikatsioon</dt>
+        <dd class="col-sm-10">@Model.Qualifications</dd>
+    </dl>
+
+
+    <form asp-action="Delete" method="post">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Kustuta</button>
+        <a asp-action="Index" class="btn btn-secondary">Tagasi</a>
+    </form>
+</div>
